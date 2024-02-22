@@ -1,0 +1,332 @@
+syntax = "proto3";
+// import "common/geometry.proto";
+
+package cp.cp_planning.proto.memory_cruise;
+
+message PointENU {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+  PointLLA origin_global_coords = 4;
+  Quaternion quaternion_local = 5;
+}
+
+message PointLLA {
+  double longtitude = 1;
+  double latitude = 2;
+  double altitude = 3;
+  Quaternion quaternion = 4;
+}
+
+message Transform {
+  Quaternion transform_q = 1;
+  Vector3d transform_t = 2;
+  PointLLA transform_center = 3;
+}
+
+enum SplitMerge {
+  SPLIT_MERGE_UNKNOWN = 0;
+  SPLIT = 1;
+  MERGE = 2;
+  CONTINUE = 3;
+}
+
+enum LaneType {  // identical to LaneCenterNodeLaneTypeEnum in maf_landmark
+  LANE_TYPE_UNKNOWN = 0;
+  LANE_TYPE_NORMAL = 1;
+  LANE_TYPE_EMERGENCY = 5;
+  LANE_TYPE_BUS = 6;
+  LANE_TYPE_PASSING = 7;
+  LANE_TYPE_HOV = 8;
+  LANE_TYPE_ACCELERATE = 9;
+  LANE_TYPE_UTURN = 10;
+  LANE_TYPE_DECELERATE = 11;
+  LANE_TYPE_SHOULDER = 12;
+  LANE_TYPE_INTERSECTION = 14;
+  LANE_TYPE_NON_MOTOR = 15;
+  LANE_TYPE_MIXED_MOTOR = 16;
+  LANE_TYPE_SIDE_WALK = 17;
+  LANE_TYPE_MOTORCYCLE = 18;
+  LANE_TYPE_TOLL_ETC = 19;
+  LANE_TYPE_TOLL = 20;
+  LANE_TYPE_CHECKPOINT = 21;
+  LANE_TYPE_RAMP = 22;
+  LANE_TYPE_BARRIER = 23;
+  LANE_TYPE_CHANNELIZATION = 24;
+  LANE_TYPE_EMERGENCE_STOP = 25;
+  LANE_TYPE_HAZARDOUS_GOODS = 26;
+  LANE_TYPE_STEEP_GRADE = 27;
+  LANE_TYPE_DIREC_VARIABLE = 28;
+  LANE_TYPE_CUSTOMS_SUP = 29;
+  LANE_TYPE_EMERGENCE_RAMP = 30;
+  LANE_TYPE_PARKING = 31;
+  LANE_TYPE_TIDAL = 32;
+  LANE_TYPE_TEMPORARY = 33;
+  LANE_TYPE_LEFT_TURN_WAITING_AREA = 34;
+  LANE_TYPE_STRAIGHT_TURN_WAITING_AREA = 35;
+  LANE_TYPE_LEFT_ACC = 36;
+  LANE_TYPE_RIGHT_ACC = 37;
+  LANE_TYPE_LEFT_DEC = 38;
+  LANE_TYPE_RIGHT_DEC = 39;
+  LANE_TYPE_SERVICE_RAMP = 40;
+  LANE_TYPE_CURB = 41;
+  LANE_TYPE_RAILWAY = 42;
+  LANE_TYPE_BUS_STOP = 43;
+  LANE_TYPE_ROUNDABOUT = 44;
+  LANE_TYPE_INVALID = 45;
+  LANE_TYPE_WIDE = 46;
+  LANE_TYPE_VIRTUAL = 47;
+
+  LANE_TYPE_OTHERS = 63;
+
+  LANE_TYPE_ACC_DEC = 70;
+  LANE_TYPE_WAITING_AREA = 71;
+  LANE_TYPE_TOLL_MANUAL = 72;
+}
+
+enum LaneTurnType {  // identical to LaneCenterNodeDirectionTypeEnum in
+                     // maf_landmark
+  TURN_TYPE_UNKNOWN = 0;
+  STRAIGHT = 1;
+  LEFT_TURN = 2;
+  RIGHT_TURN = 3;
+  LEFT_CONFLUENCE = 6;
+  RIGHT_CONFLUENCE = 7;
+  U_TURN_LEFT = 8;
+  U_TURN_RIGHT = 9;
+
+  TURN_TYPE_TEXT = 21;
+  STRAIGHT_LEFT_TURN = 22;
+  STRAIGHT_RIGHT_TURN = 23;
+  STRAIGHT_U_TURN = 24;
+  LEFT_TURN_U_TURN = 25;
+  LEFT_TURN_AND_INTERFLOW = 26;
+  RIGHT_TURN_AND_INTERFLOW = 27;
+  LEFT_RIGHT_TURN = 28;
+  NO_LEFT_TURN = 29;
+  NO_RIGHT_TURN = 30;
+  NO_U_TURN = 31;
+  STRAIGHT_LEFT_RIGHT = 32;
+  STRAIGHT_U_LEFT = 33;
+  LEFT_MERGE = 34;
+  RIGHT_MERGE = 35;
+  RIGHT_TURN_U_TURN = 36;
+}
+
+message LaneOrder {
+  uint32 left_to_right_order = 1;
+  uint32 right_to_left_order = 2;
+}
+
+enum BoundaryType {  // identical to LaneBoundaryTypeEnum in maf_landmark
+  BOUNDARY_TYPE_UNKNOWN = 0;
+  BOUNDARY_TYPE_DASHED = 1;
+  BOUNDARY_TYPE_SOLID = 2;
+  BOUNDARY_TYPE_DOUBLE_SOLID = 3;
+  BOUNDARY_TYPE_DOUBLE_DASHED = 4;
+  BOUNDARY_TYPE_LEFT_DASHED_RIGHT_SOLID = 5;
+  BOUNDARY_TYPE_LEFT_SOLID_RIGHT_DASHED = 6;
+  BOUNDARY_TYPE_LEFT_DASHED_RIGHT_DASHED = 7;
+  BOUNDARY_TYPE_LEFT_SOLID_RIGHT_SOLID = 8;
+  BOUNDARY_TYPE_ZIG_ZAG = 9;
+  BOUNDARY_TYPE_BOTTS_DOTS = 10;
+  BOUNDARY_TYPE_CHANGEABLE_LANE_MARK = 11;
+  BOUNDARY_TYPE_LOGICAL = 12;
+  BOUNDARY_TYPE_PHYSICAL = 13;
+  BOUNDARY_TYPE_VIRTUAL = 14;
+  BOUNDARY_TYPE_SHORT_DASHED_LINE = 15;
+  BOUNDARY_TYPE_SHADE_AREA = 16;
+  BOUNDARY_TYPE_LANE_VIRTUAL_MARKING = 17;
+  BOUNDARY_TYPE_INTERSECTION_VIRTUAL_MARKING = 18;
+  BOUNDARY_TYPE_CURB_VIRTUAL_MARKING = 19;
+  BOUNDARY_TYPE_UNCLOSED_ROAD = 20;
+  BOUNDARY_TYPE_ROAD_VIRTUAL_LINE = 21;
+  BOUNDARY_TYPE_ROAD = 22;
+
+  BOUNDARY_TYPE_OTHERS = 99;
+}
+
+message LaneTopo {
+  uint32 lane_order = 1;  // lane order of pre or succ
+  uint32 lane_size = 2;
+  SplitMerge split_merge = 3;
+}
+
+enum WaitingType {
+  WAITING_TYPE_UNKNOWN = 0;
+  WAITING_TYPE_NORMAL = 1;
+  WAITING_TYPE_WAITING_AREA = 2;
+}
+
+message Lane {
+  LaneOrder lane_order = 1;
+  repeated LaneTopo pre_lanes = 2;
+  LaneType lane_type = 3;
+  LaneTurnType lane_turn_type = 4;
+  BoundaryType left_boundary_type = 5;
+  BoundaryType right_boundary_type = 6;
+  bool is_left_near_road_boundary = 7;
+  bool is_right_near_road_boundary = 8;
+  bool has_stop_line = 9;
+  double width = 10;
+  double offset = 11;
+  WaitingType waiting_type = 12;
+  bool is_invisible_lane = 13;
+  SplitMerge split_merge = 14;
+}
+
+message LaneInfo {
+  uint32 ego_lane_index = 1;
+  repeated Lane lanes = 2;  // left to right lanes
+}
+
+message LineSegment {
+  PointENU start_point = 1;
+  PointENU end_point = 2;
+}
+
+enum TrafficLightDirection {
+  TRAFFIC_LIGHT_DIRECTION_UNKNOWN = 0;
+  TRAFFIC_LIGHT_STRAIGHT = 1;
+  TRAFFIC_LIGHT_LEFT = 2;
+  TRAFFIC_LIGHT_RIGHT = 3;
+  TRAFFIC_LIGHT_CIRCLE = 4;
+  TRAFFIC_LIGHT_U_TURN = 5;
+  TRAFFIC_LIGHT_NO_DISTINGUISH_DIRECTION = 6;
+}
+
+message TrafficBulb {
+  repeated TrafficLightDirection light_directions = 1;
+}
+
+message TrafficLight {
+  PointENU position = 1;
+  double heading = 2;
+  repeated TrafficBulb traffic_bulbs = 3;
+}
+
+message IntersectionInfo {
+  bool in_intersection = 1;
+  bool has_stop_line = 2;
+  LineSegment exit_road_line = 3;
+  repeated PointENU lane_center_points = 4;
+  repeated LineSegment stop_lines = 5;
+  repeated TrafficLight traffic_lights = 6;
+}
+
+message ManualAction {
+  enum IntersectionAction {
+    NO_INTERSECTION_ACTION = 0;
+    START_INTERSECTION = 1;
+    END_INTERSECTION = 2;
+  }
+  enum LaneChangeAction {
+    NO_LANE_CHANGE_ACTION = 0;
+    START_LANE_CHANGE = 1;
+    END_LANE_CHANGE = 2;
+  }
+  enum RampAction {
+    NO_RAMP_ACTION = 0;
+    START_RAMP_IN = 1;
+    END_RAMP_IN = 2;
+    START_RAMP_OUT = 3;
+    END_RAMP_OUT = 4;
+  }
+  IntersectionAction intersection_action = 1;
+  LaneChangeAction lane_change_action = 2;
+  RampAction ramp_action = 3;
+}
+
+enum MergeDivergeType {
+  MERGE_DIVERGE_UNKNOWN = 0;
+  MERGE_POINT = 1;
+  DIVERGE_POINT = 2;
+  NO_MERGE_DIVERGE = 3;
+}
+
+message MergeDivergeInfo {
+  MergeDivergeType type = 1;
+  double l = 2;
+  uint32 left_lane_size = 3;
+  uint32 right_lane_size = 4;
+  PointENU point = 5;
+}
+
+enum TurnSignalType {
+  NONE = 0;
+  LEFT = 1;
+  RIGHT = 2;
+  EMERGENCY_FLASHER = 3;
+};
+
+message VehicleLightData {
+  TurnSignalType turn_signal = 1;      // lever state
+  TurnSignalType turn_signal_type = 2; // real turn light
+};
+
+message VehicleInfo {
+  VehicleLightData vehicle_light_data = 1;
+}
+
+message Crosswalk {
+  double width = 1;
+  repeated PointENU polygon_points = 2; // The points of polygon.The p0->p1 and p2->p3 are the two sides of the crosswalk.
+}
+
+message CrosswalkInfo {
+  repeated Crosswalk crosswalks = 1;
+}
+
+message LandMark {
+  repeated PointENU polygon_points = 1;
+  LaneTurnType landmark_turn_type = 2;
+}
+
+message LandMarkInfo {
+  repeated LandMark landmarks = 1;
+}
+
+message Quaternion {
+  double w = 1;
+  double x = 2;
+  double y = 3;
+  double z = 4;
+}
+
+message Vector3d {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+message SurroundingVehicles{
+  double average_speed = 1;
+  double vehicle_density = 2;
+  double traffic_flow = 3;
+}
+
+message TrajInfo {
+  uint64 timestamp = 1;
+  PointENU point = 2;
+  double s = 3;
+  double v = 4;
+  double limit_speed = 5;
+  LaneInfo lane_info = 6;
+  IntersectionInfo intersection_info = 7;
+  double left_road_width = 8;
+  double right_road_width = 9;
+  MergeDivergeInfo merge_diverge_info = 10;
+  ManualAction manual_action = 11;  // for offline info editing
+  Transform transform_llh_to_boot = 12;
+  VehicleInfo vehicle_info = 13;
+  CrosswalkInfo crosswalk_info = 14;
+  LandMarkInfo land_mark_info = 15;
+  bool left_road_width_from_lb = 16;
+  bool right_road_width_from_lb = 17;
+  bool is_queue = 18;
+  SurroundingVehicles surrounding_vehicles=19;
+}
+
+message MemoryCruise {
+  repeated TrajInfo traj_info = 1;  // info at ego pos
+}
